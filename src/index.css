@@ -1,0 +1,291 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --color-text: #000;
+  --color-bg: #fff;
+}
+
+:root.inverted {
+  --color-text: #fff;
+  --color-bg: #000;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.game-shell {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+}
+
+.game-shell-top {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  width: 100%;
+}
+
+.game-shell-top-corner {
+  flex: 0 0 auto;
+}
+
+.game-shell-top-menu {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.game-shell-main {
+  margin-top: 1.5rem;
+}
+
+.game-menu {
+  width: auto;
+}
+
+.game-menu-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.game-menu-tabs li {
+  flex: 0 0 auto;
+}
+
+.game-menu-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5.5rem;
+  min-height: 4.75rem;
+  padding: 0.5rem 0.4rem;
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.15;
+  white-space: pre-line;
+  text-align: center;
+  cursor: pointer;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 2px solid var(--color-text);
+}
+
+.game-menu-tab--active {
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-weight: bold;
+}
+
+.character-display {
+  width: 10.5rem;
+  font-size: 0.9rem;
+  line-height: 1.15;
+}
+
+.character-display-hp {
+  position: relative;
+  margin: 0 0 0.35rem;
+}
+
+.character-display-hp-track {
+  height: 1.25rem;
+  background: #cccccc;
+}
+
+.character-display-hp-fill {
+  height: 100%;
+}
+
+.character-display-hp-fill--green {
+  background: #22a022;
+}
+
+.character-display-hp-fill--orange {
+  background: #e68619;
+}
+
+.character-display-hp-fill--red {
+  background: #cc1111;
+}
+
+.character-display-hp-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow:
+    -1px -1px 0 #000000,
+    1px -1px 0 #000000,
+    -1px 1px 0 #000000,
+    1px 1px 0 #000000;
+  pointer-events: none;
+}
+
+.character-display-heading {
+  margin: 0.35rem 0 0.1rem;
+  font-size: inherit;
+  font-weight: bold;
+}
+
+.character-display-equipment {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.35rem;
+  row-gap: 0;
+  margin: 0;
+}
+
+.character-display-equipment dt {
+  margin: 0;
+}
+
+.character-display-equipment dd {
+  margin: 0;
+}
+
+.game-shell h1 {
+  margin: 0 0 1.5rem;
+  font-size: 1.75rem;
+  font-weight: normal;
+}
+
+.candy-display {
+  margin: 0;
+}
+
+.candy-display strong {
+  font-weight: bold;
+}
+
+.eat-candy {
+  margin: 1rem 0 0;
+}
+
+.eat-candy button {
+  font: inherit;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-text);
+}
+
+.eat-candy button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.eat-candy-hint {
+  font-size: 0.95rem;
+}
+
+.merchant-event {
+  margin: 1.5rem 0 0;
+}
+
+.merchant-heading {
+  margin: 0 0 0.35rem;
+  font-size: inherit;
+  font-weight: bold;
+}
+
+.merchant-art-block {
+  margin: 0;
+}
+
+.merchant-encounter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2rem;
+  align-items: flex-start;
+  margin: 1.5rem 0 0;
+}
+
+.merchant-inventory {
+  flex: 1;
+  min-width: 10rem;
+  padding-top: 5.5rem;
+}
+
+.merchant-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+}
+
+.merchant-item:last-child {
+  margin-bottom: 0;
+}
+
+.merchant-item-art {
+  margin: 0;
+  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  font-size: 1rem;
+  line-height: 1.2;
+  white-space: pre;
+}
+
+.merchant-item-details {
+  margin: 0;
+}
+
+.merchant-item-name {
+  margin: 0;
+  font-weight: bold;
+}
+
+.merchant-item-price,
+.merchant-item-status {
+  margin: 0.25rem 0 0;
+}
+
+.merchant-item-details button {
+  margin: 0.5rem 0 0;
+  font: inherit;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-text);
+}
+
+.merchant-item-details button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ascii-art {
+  margin: 0;
+  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  font-size: 1rem;
+  line-height: 1.2;
+  white-space: pre;
+}

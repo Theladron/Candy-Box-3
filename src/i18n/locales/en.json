@@ -1,0 +1,44 @@
+{
+  "candy": {
+    "youHave_one": "You have <strong>{{count}}</strong> candy.",
+    "youHave_other": "You have <strong>{{count}}</strong> candies."
+  },
+  "eatCandy": {
+    "button": "Eat all candies",
+    "noneHint": "(none to eat)"
+  },
+  "characterDisplay": {
+    "label": "Character display",
+    "equipment": "Equipment",
+    "magic": "Magic",
+    "none": "None"
+  },
+  "equipment": {
+    "weapon": "Weapon",
+    "chest": "Chest",
+    "feet": "Feet",
+    "hands": "Hands",
+    "head": "Head"
+  },
+  "menu": {
+    "label": "Game menu",
+    "tabs": {
+      "candyBox": "The\nCandy\nBox",
+      "save": "Save",
+      "settings": "Settings"
+    }
+  },
+  "merchant": {
+    "wanderingMerchant": "Wandering Merchant",
+    "stepsCloser": "Steps are coming closer...",
+    "purchased": "Purchased",
+    "buy": "Buy",
+    "price_one": "{{count}} candy",
+    "price_other": "{{count}} candies",
+    "items": {
+      "lollipop": "Lollipop",
+      "characterDisplay": "Character Display",
+      "menu": "Menu"
+    }
+  }
+}

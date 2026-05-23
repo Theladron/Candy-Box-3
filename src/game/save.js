@@ -5,7 +5,11 @@ export const SLOT_IDS = ['slot1', 'slot2', 'slot3', 'slot4', 'slot5']
 export const STORAGE_PREFIX = 'candybox3'
 export const AUTOSAVE_INTERVAL_MS = 600_000
 
-const NON_PERSISTENT_KEYS = ['merchantHatMessageIndex']
+const NON_PERSISTENT_KEYS = [
+  'merchantHatMessageIndex',
+  'merchantMapMessageIndex',
+  'merchantMapOfferDialogVisible',
+]
 
 const AUTOSAVE_ENABLED_KEY = `${STORAGE_PREFIX}.autosaveEnabled`
 const AUTOSAVE_SLOT_KEY = `${STORAGE_PREFIX}.autosaveSlot`
@@ -47,6 +51,8 @@ function normalizeLoadedState(partial) {
       ...(partial.equipment || {}),
     },
     merchantHatMessageIndex: null,
+    merchantMapMessageIndex: null,
+    merchantMapOfferDialogVisible: false,
   }
 }
 

@@ -33,15 +33,20 @@
     "label": "Game menu",
     "tabs": {
       "candyBox": "The\nCandy\nBox",
+      "map": "Map",
       "save": "Save",
       "settings": "Settings"
     }
+  },
+  "map": {
+    "placeholder": "The world awaits."
   },
   "merchant": {
     "wanderingMerchant": "Wandering Merchant",
     "stepsCloser": "Steps are coming closer...",
     "purchased": "Purchased",
     "buy": "Buy",
+    "grab": "Grab",
     "price_one": "{{count}} candy",
     "price_other": "{{count}} candies",
     "lollipopPrice_one": "{{count}} lollipop",
@@ -50,7 +55,20 @@
       "lollipop": "Lollipop",
       "characterDisplay": "Character Display",
       "menu": "Menu",
-      "walkingStick": "Merchant's Walking Stick"
+      "walkingStick": "Merchant's Walking Stick",
+      "map": "Map"
+    },
+    "talkLabel": "Talk",
+    "talk": {
+      "whereAmI": "How did you find me? And where am I?"
+    },
+    "mapOfferMessage": "Oh yeah, I could sell you a map I suppose...",
+    "mapClickLabel": "Touch the merchant's map",
+    "mapFree": "Free",
+    "mapTouchMessages": {
+      "0": "Please don't start touching my wares.",
+      "1": "Don't touch it, please. Letting customers handle the wares decreases their value dramatically!",
+      "2": "Ok, whatever. You can keep it. I wouldn't know of anyone ever buying it anyways."
     },
     "hatClickLabel": "Touch the merchant's hat",
     "stickClickLabel": "Touch the merchant's walking stick",
@@ -71,7 +89,7 @@
   "save": {
     "local": {
       "title": "Local save",
-      "warning": "Saves stay on this browser and device. Do not clear site data or you may lose them. Copy a text save below to move your game elsewhere.",
+      "warning": "Saves stay on this browser and device. Do not clear site data or you may lose them.",
       "slotLabel": "Save slot",
       "slotEmpty": "empty",
       "slotUnknownDate": "unknown date",
@@ -124,6 +142,32 @@
       "empty_text": "Paste a save before loading.",
       "copy_failed": "Could not copy to clipboard.",
       "delete_failed": "Could not clear that slot."
+    }
+  },
+  "settings": {
+    "config": {
+      "title": "Configuration",
+      "languageLabel": "Language",
+      "languages": {
+        "en": "English"
+      },
+      "themeLabel": "Appearance",
+      "themeLightSymbol": "☀",
+      "themeDarkSymbol": "☽",
+      "themeLightHint": "Light mode",
+      "themeDarkHint": "Dark mode"
+    },
+    "about": {
+      "whoTitle": "Who?",
+      "whoDesign": "Game design & code by Theladron. Inspired by the great Candy Box games by Aniwey.",
+      "whoArtists": "ASCII art by Andreas Freise, Martin Brunzel, Theladron, Aniwey. Please visit and support <link>asciiart.eu</link>.",
+      "licenseTitle": "License?",
+      "licenseCode": "The game source code is published under the GPLv3. You may modify and redistribute it, even for commercial purposes, under the terms of that license.",
+      "licenseCodeLink": "<gpl>Learn more</gpl>",
+      "licenseArt": "ASCII art in this game comes from several artists and sources. It is not necessarily licensed for commercial reuse. Credit the artists, respect their terms, and do not redistribute the art separately without permission.",
+      "moreTitle": "Anything else?",
+      "thankYou": "I want to give a huge thank you to Aniwey, the original creator. I was inspired by his games, fascinated by the simplistic style and addictive gameplay, and wanted to create a worthy successor.",
+      "contact": "Feel free to contact me at <email>phil.wolframm@gmail.com</email> if you have any comments or questions."
     }
   }
 }

@@ -1,5 +1,1 @@
-export const MENU_TABS = [
-  { id: 'candyBox', labelKey: 'menu.tabs.candyBox' },
-  { id: 'save', labelKey: 'menu.tabs.save' },
-  { id: 'settings', labelKey: 'menu.tabs.settings' },
-]
+export { MAP_MENU_TAB, MENU_TABS } from '../game/menuTabs'

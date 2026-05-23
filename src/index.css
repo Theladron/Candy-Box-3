@@ -275,6 +275,48 @@ body {
   padding-top: 10.5rem;
 }
 
+.merchant-inventory > .merchant-dialog {
+  margin: 0 0 0.75rem;
+}
+
+.merchant-talk {
+  margin: 0 0 1.25rem;
+}
+
+.merchant-talk-label {
+  margin: 0 0 0.35rem;
+  font-weight: bold;
+}
+
+.merchant-talk-option {
+  display: block;
+  font: inherit;
+  text-align: left;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-text);
+}
+
+.merchant-map-art-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.merchant-map-hitbox {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.map-panel-art {
+  margin: 0 0 1rem;
+}
+
 .merchant-lollipop-slot {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -378,17 +420,76 @@ body {
   white-space: pre;
 }
 
-.save-panel {
+.save-panel,
+.settings-panel {
   max-width: 36rem;
 }
 
-.save-section {
+.save-section,
+.settings-section {
   margin: 0 0 2rem;
 }
 
-.save-section-title {
+.save-section-title,
+.settings-section-title {
   margin: 0 0 0.75rem;
   font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.settings-section p {
+  margin: 0 0 0.75rem;
+}
+
+.settings-section p:last-child {
+  margin-bottom: 0;
+}
+
+.settings-section a {
+  color: var(--color-text);
+}
+
+.settings-field-label {
+  display: block;
+  margin: 0 0 0.35rem;
+  font-weight: bold;
+}
+
+.settings-select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 1rem;
+  font: inherit;
+  padding: 0.35rem 0.5rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-text);
+}
+
+.settings-theme-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.settings-theme-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-text);
+}
+
+.settings-theme-btn--active {
+  background: var(--color-text);
+  color: var(--color-bg);
   font-weight: bold;
 }
 

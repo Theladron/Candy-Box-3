@@ -4,6 +4,15 @@ export const MERCHANT_LOLLIPOP_BASE_PRICE = 100
 export const MERCHANT_WALKING_STICK_PRICE = 100_000
 export const MERCHANT_HAT_MESSAGE_COUNT = 9
 export const MERCHANT_HAT_ANNOYED_MESSAGE_INDEX = 2
+export const MERCHANT_MAP_BASE_PRICE = 500
+export const MERCHANT_MAP_TOUCH_MESSAGE_COUNT = 3
+export const MERCHANT_MAP_ANNOYED_MESSAGE_INDEX = 1
+
+const MAP_PRICE_BY_TOUCH = {
+  0: 400,
+  1: 300,
+  2: 0,
+}
 
 export const MERCHANT_CURRENCIES = {
   CANDIES: 'candies',
@@ -47,6 +56,13 @@ export const MERCHANT_ITEMS = {
     currency: MERCHANT_CURRENCIES.LOLLIPOPS,
     repeatable: false,
   },
+  MAP: {
+    id: 'map',
+    nameKey: 'merchant.items.map',
+    price: MERCHANT_MAP_BASE_PRICE,
+    currency: MERCHANT_CURRENCIES.CANDIES,
+    repeatable: false,
+  },
 }
 
 export const MERCHANT_CATALOG = [
@@ -82,6 +98,8 @@ export function isMerchantItemOwned(state, itemId) {
       return state.menuUnlocked
     case MERCHANT_ITEMS.WALKING_STICK.id:
       return state.merchantWalkingStickOwned
+    case MERCHANT_ITEMS.MAP.id:
+      return state.mapUnlocked
     default:
       return false
   }
@@ -91,9 +109,16 @@ export function getMerchantItemPrice(state, itemId) {
   if (itemId === MERCHANT_ITEMS.LOLLIPOP.id) {
     return state.merchantLollipopPrice
   }
+  if (itemId === MERCHANT_ITEMS.MAP.id) {
+    return state.merchantMapPrice
+  }
 
   const item = Object.values(MERCHANT_ITEMS).find((entry) => entry.id === itemId)
   return item?.price ?? 0
+}
+
+export function isMerchantMapFree(state) {
+  return getMerchantItemPrice(state, MERCHANT_ITEMS.MAP.id) === 0
 }
 
 export function getMerchantItemCurrency(itemId) {
@@ -120,11 +145,34 @@ export function canClickMerchantStick(state) {
   return shouldShowMerchant(state) && !state.merchantWalkingStickOwned
 }
 
-export function shouldShowAnnoyedMerchantArt(state) {
+export function canShowWhereAmITalk(state) {
   return (
+    shouldShowMerchant(state) &&
+    state.menuUnlocked &&
+    state.characterDisplayUnlocked &&
+    !state.merchantWhereAmIAsked
+  )
+}
+
+export function shouldShowMerchantMap(state) {
+  return state.merchantMapOfferActive && !state.mapUnlocked
+}
+
+export function canClickMerchantMap(state) {
+  return (
+    shouldShowMerchantMap(state) &&
+    state.merchantMapClickCount < MERCHANT_MAP_TOUCH_MESSAGE_COUNT
+  )
+}
+
+export function shouldShowAnnoyedMerchantArt(state) {
+  const hatAnnoyed =
     state.merchantHatMessageIndex !== null &&
     state.merchantHatMessageIndex >= MERCHANT_HAT_ANNOYED_MESSAGE_INDEX
-  )
+  const mapAnnoyed =
+    state.merchantMapMessageIndex !== null &&
+    state.merchantMapMessageIndex >= MERCHANT_MAP_ANNOYED_MESSAGE_INDEX
+  return hatAnnoyed || mapAnnoyed
 }
 
 export function formatCompactLps(amount) {
@@ -148,6 +196,8 @@ export function clickMerchantHat(state) {
     merchantHatClickCount: messageIndex + 1,
     merchantHatMessageIndex: messageIndex,
     merchantStickOfferVisible: false,
+    merchantMapOfferDialogVisible: false,
+    merchantMapMessageIndex: null,
     merchantLollipopPrice: nextPrice,
   }
 }
@@ -161,6 +211,44 @@ export function clickMerchantStick(state) {
     ...state,
     merchantStickOfferVisible: true,
     merchantHatMessageIndex: null,
+    merchantMapOfferDialogVisible: false,
+    merchantMapMessageIndex: null,
+  }
+}
+
+export function askMerchantWhereAmI(state) {
+  if (!canShowWhereAmITalk(state)) {
+    return state
+  }
+
+  return {
+    ...state,
+    merchantWhereAmIAsked: true,
+    merchantMapOfferActive: true,
+    merchantMapOfferDialogVisible: true,
+    merchantMapPrice: MERCHANT_MAP_BASE_PRICE,
+    merchantHatMessageIndex: null,
+    merchantStickOfferVisible: false,
+    merchantMapMessageIndex: null,
+  }
+}
+
+export function clickMerchantMap(state) {
+  if (!canClickMerchantMap(state)) {
+    return state
+  }
+
+  const messageIndex = state.merchantMapClickCount
+  const nextPrice = MAP_PRICE_BY_TOUCH[messageIndex] ?? state.merchantMapPrice
+
+  return {
+    ...state,
+    merchantMapClickCount: messageIndex + 1,
+    merchantMapMessageIndex: messageIndex,
+    merchantMapOfferDialogVisible: false,
+    merchantMapPrice: nextPrice,
+    merchantHatMessageIndex: null,
+    merchantStickOfferVisible: false,
   }
 }
 
@@ -173,6 +261,14 @@ export function clearMerchantDialog(state) {
 
   if (state.merchantStickOfferVisible) {
     nextState.merchantStickOfferVisible = false
+  }
+
+  if (state.merchantMapOfferDialogVisible) {
+    nextState.merchantMapOfferDialogVisible = false
+  }
+
+  if (state.merchantMapMessageIndex !== null) {
+    nextState.merchantMapMessageIndex = null
   }
 
   return nextState
@@ -190,13 +286,19 @@ export function canBuyMerchantItem(state, itemId) {
     return false
   }
 
-  const price = getMerchantItemPrice(state, itemId)
-  if (!canAffordMerchantItem(state, itemId, price)) {
-    return false
-  }
   if (!item.repeatable && isMerchantItemOwned(state, itemId)) {
     return false
   }
+
+  const price = getMerchantItemPrice(state, itemId)
+  if (price === 0) {
+    return true
+  }
+
+  if (!canAffordMerchantItem(state, itemId, price)) {
+    return false
+  }
+
   return true
 }
 
@@ -207,12 +309,15 @@ export function buyMerchantItem(state, itemId) {
 
   const price = getMerchantItemPrice(state, itemId)
   const currency = getMerchantItemCurrency(itemId)
-  const nextState = {
-    ...state,
-    ...(currency === MERCHANT_CURRENCIES.LOLLIPOPS
-      ? { lollipops: state.lollipops - price }
-      : { candies: state.candies - price }),
-  }
+  const nextState =
+    price === 0
+      ? { ...state }
+      : {
+          ...state,
+          ...(currency === MERCHANT_CURRENCIES.LOLLIPOPS
+            ? { lollipops: state.lollipops - price }
+            : { candies: state.candies - price }),
+        }
 
   switch (itemId) {
     case MERCHANT_ITEMS.LOLLIPOP.id:
@@ -230,6 +335,14 @@ export function buyMerchantItem(state, itemId) {
           ...state.equipment,
           weapon: 'merchantWalkingStick',
         },
+      }
+    case MERCHANT_ITEMS.MAP.id:
+      return {
+        ...nextState,
+        mapUnlocked: true,
+        merchantMapOfferActive: false,
+        merchantMapOfferDialogVisible: false,
+        merchantMapMessageIndex: null,
       }
     default:
       return state

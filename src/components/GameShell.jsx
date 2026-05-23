@@ -9,7 +9,9 @@ import { EatCandyButton } from './EatCandyButton'
 import { EatenCandyDisplay } from './EatenCandyDisplay'
 import { LollipopDisplay } from './LollipopDisplay'
 import { Menu } from './Menu'
+import { MapPanel } from './panels/MapPanel'
 import { SavePanel } from './panels/SavePanel'
+import { SettingsPanel } from './panels/SettingsPanel'
 import { WanderingMerchantEncounter } from './WanderingMerchantEncounter'
 
 function CandyBoxPanel() {
@@ -29,12 +31,9 @@ function CandyBoxPanel() {
   )
 }
 
-function SettingsPanel() {
-  return null
-}
-
 const PANELS = {
   candyBox: CandyBoxPanel,
+  map: MapPanel,
   save: SavePanel,
   settings: SettingsPanel,
 }

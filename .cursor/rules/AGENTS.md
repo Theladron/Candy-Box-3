@@ -67,7 +67,7 @@ src/game/ ← pure logic; NO React imports src/context/ ← GameProvider, useGam
 ### `src/hooks/`
 
 - `useGameTick` — **single owner** of `setInterval` / tick loop; dispatches tick actions
-- `useSaveGame` (when added) — load on mount, save on interval + critical actions
+- `useSaveGame` — load on mount (`?slot=N`), autosave interval, `beforeunload` save
 
 ### `src/components/`
 
@@ -89,9 +89,27 @@ src/game/ ← pure logic; NO React imports src/context/ ← GameProvider, useGam
 4. **Pure logic** — implement rules/math in `src/game/<system>.js`.
 5. **Tick** — if time-based, extend tick handling in reducer via a tick action (not a panel effect).
 6. **UI** — add or update a panel; register tab in `GameShell`.
-7. **Save** — if shape changes, bump `saveVersion` and add migration.
+7. **Save** — wire save-worthy fields (see **Save / persistence** below); bump `SAVE_VERSION` in `save.js` and add a migration when the persisted shape changes.
 
 **Do not** ship a feature that only works while its tab is open.
+
+---
+
+## Save / persistence
+
+Gameplay state in `initialState.js` is persisted automatically via `src/game/save.js` (`serializeState` / `deserializeState`, slot storage, text export/import, URL `?slot=N`, autosave). User prefs (theme, language) live in `src/settings/userPrefs.js` — **not** in the game save blob.
+
+**Whenever you add new state that is save-worthy, wire it into the save system in the same change:**
+
+1. Add the field to `initialState.js` (and handle it in the reducer).
+2. Confirm it is included in persistence — by default every `initialState` key is saved except keys listed in `NON_PERSISTENT_KEYS` in `save.js`.
+3. If the field is **UI-only or ephemeral** (active tab, transient dialog index, one-shot animations), add it to `NON_PERSISTENT_KEYS` instead of relying on it being absent from `initialState`.
+4. Extend `validateGameplayState` in `save.js` if the new field needs type/shape checks beyond the defaults.
+5. If the on-disk format changes, bump `SAVE_VERSION` and add a migration in `save.js`.
+
+**Save-worthy** means progression the player expects to keep across refresh, slot load, and text export: currencies, unlocks, equipment, quest progress, merchant state, HP, etc.
+
+**Do not** store save-worthy progression only in React `useState`, `sessionStorage`, or panel-local state. **Do not** ship new progression fields without verifying they round-trip through save → load (and migration, if applicable).
 
 ---
 
@@ -159,13 +177,14 @@ One file per major **system** in `src/game/`; one panel per major **tab** in `pa
 - God files mixing reducer, UI, and formulas
 - Adding Redux, a game engine, or TypeScript without explicit request
 - Hardcoded player-facing strings in JSX instead of i18n translation keys
+- New `initialState` progression fields not wired through `save.js` (missing validation, wrong `NON_PERSISTENT_KEYS`, or no migration after a format change)
 
 ---
 
 ## Agent behavior
 
 - Do not add comments unless the **Comments** rules above allow it.
-- Read `initialState.js`, `actions.js`, and `reducer.js` before changing behavior.
+- Read `initialState.js`, `actions.js`, `reducer.js`, and `save.js` before changing gameplay state or persistence.
 - Implement toward **this** structure; migrate misplaced logic (e.g. tick in a panel) toward the layers above.
 - When the repo conflicts with these rules, **follow the rules** and say what was moved if restructuring.
 - State why before adding any dependency.

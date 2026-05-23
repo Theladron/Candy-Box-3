@@ -4,20 +4,25 @@ import { ACTIONS } from '../game/actions'
 import {
   canBuyMerchantItem,
   canClickMerchantHat,
+  canClickMerchantMap,
   canClickMerchantStick,
+  canShowWhereAmITalk,
   formatCompactLps,
   getMerchantItemCurrency,
   getMerchantItemPrice,
   getVisibleMerchantCatalog,
   isMerchantItemOwned,
+  isMerchantMapFree,
   MERCHANT_CURRENCIES,
   MERCHANT_ITEMS,
   shouldShowAnnoyedMerchantArt,
   shouldShowMerchant,
+  shouldShowMerchantMap,
   shouldShowStepsMessage,
 } from '../game/merchant'
 import { CHARACTER_DISPLAY_ART } from './ascii/CharacterDisplayArt'
 import { LOLLIPOP_ART } from './ascii/LollipopArt'
+import { MAP_ART } from './ascii/MapArt'
 import { MENU_ART } from './ascii/MenuArt'
 import { WANDERING_MERCHANT_ANNOYED_ART } from './ascii/WanderingMerchantAnnoyedArt'
 import { WANDERING_MERCHANT_ART } from './ascii/WanderingMerchantArt'
@@ -35,16 +40,26 @@ function MerchantDialog() {
 
   const showStickOffer =
     state.merchantStickOfferVisible && !state.merchantWalkingStickOwned
+  const showMapTouch = state.merchantMapMessageIndex !== null
   const showHatMessage =
-    !showStickOffer && state.merchantHatMessageIndex !== null
+    !showStickOffer && !showMapTouch && state.merchantHatMessageIndex !== null
+  const showMapOffer =
+    !showStickOffer &&
+    !showMapTouch &&
+    !showHatMessage &&
+    state.merchantMapOfferDialogVisible
 
-  if (!showStickOffer && !showHatMessage) {
+  if (!showStickOffer && !showMapTouch && !showHatMessage && !showMapOffer) {
     return null
   }
 
   const message = showStickOffer
     ? t('merchant.stickOfferMessage')
-    : t(`merchant.hatMessages.${state.merchantHatMessageIndex}`)
+    : showMapTouch
+      ? t(`merchant.mapTouchMessages.${state.merchantMapMessageIndex}`)
+      : showHatMessage
+        ? t(`merchant.hatMessages.${state.merchantHatMessageIndex}`)
+        : t('merchant.mapOfferMessage')
 
   const walkingStick = MERCHANT_ITEMS.WALKING_STICK
   const walkingStickPrice = getMerchantItemPrice(state, walkingStick.id)
@@ -55,25 +70,22 @@ function MerchantDialog() {
   }
 
   return (
-  <>
-      <span className="merchant-dialog-spacer" aria-hidden="true" />
-      <div className="merchant-dialog">
-        <p className="merchant-dialog-message">{message}</p>
-        {showStickOffer ? (
-          <button
-            type="button"
-            className="merchant-dialog-buy"
-            disabled={!canBuyStick}
-            onClick={handleBuyStick}
-          >
-            {t('merchant.hiddenBuy', {
-              name: t(walkingStick.nameKey),
-              price: formatCompactLps(walkingStickPrice),
-            })}
-          </button>
-        ) : null}
-      </div>
-    </>
+    <div className="merchant-dialog">
+      <p className="merchant-dialog-message">{message}</p>
+      {showStickOffer ? (
+        <button
+          type="button"
+          className="merchant-dialog-buy"
+          disabled={!canBuyStick}
+          onClick={handleBuyStick}
+        >
+          {t('merchant.hiddenBuy', {
+            name: t(walkingStick.nameKey),
+            price: formatCompactLps(walkingStickPrice),
+          })}
+        </button>
+      ) : null}
+    </div>
   )
 }
 
@@ -112,6 +124,69 @@ function MerchantItem({ item }) {
           </button>
         ) : null}
       </div>
+    </div>
+  )
+}
+
+function MerchantMapItem() {
+  const { state, dispatch } = useGame()
+  const { t } = useTranslation()
+  const mapItem = MERCHANT_ITEMS.MAP
+  const price = getMerchantItemPrice(state, mapItem.id)
+  const canAcquire = canBuyMerchantItem(state, mapItem.id)
+  const freeGrab = isMerchantMapFree(state)
+  const mapClickable = canClickMerchantMap(state)
+
+  function handleBuy() {
+    dispatch({ type: ACTIONS.BUY_MERCHANT_ITEM, itemId: mapItem.id })
+  }
+
+  function handleMapClick() {
+    dispatch({ type: ACTIONS.CLICK_MERCHANT_MAP })
+  }
+
+  return (
+    <div className="merchant-item merchant-item--map">
+      <div className="merchant-map-art-wrap">
+        <pre className="merchant-item-art">{MAP_ART}</pre>
+        {mapClickable ? (
+          <button
+            type="button"
+            className="merchant-map-hitbox"
+            aria-label={t('merchant.mapClickLabel')}
+            onClick={handleMapClick}
+          />
+        ) : null}
+      </div>
+      <div className="merchant-item-details">
+        <p className="merchant-item-name">{t(mapItem.nameKey)}</p>
+        <p className="merchant-item-price">
+          {freeGrab
+            ? t('merchant.mapFree')
+            : t('merchant.price', { count: price })}
+        </p>
+        <button type="button" onClick={handleBuy} disabled={!canAcquire}>
+          {freeGrab ? t('merchant.grab') : t('merchant.buy')}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function MerchantTalk() {
+  const { dispatch } = useGame()
+  const { t } = useTranslation()
+
+  function handleAskWhereAmI() {
+    dispatch({ type: ACTIONS.ASK_MERCHANT_WHERE_AM_I })
+  }
+
+  return (
+    <div className="merchant-talk">
+      <p className="merchant-talk-label">{t('merchant.talkLabel')}</p>
+      <button type="button" className="merchant-talk-option" onClick={handleAskWhereAmI}>
+        {t('merchant.talk.whereAmI')}
+      </button>
     </div>
   )
 }
@@ -167,18 +242,12 @@ export function WanderingMerchantEncounter() {
           </div>
         </div>
         <div className="merchant-inventory">
-          {getVisibleMerchantCatalog(state).map((item) => {
-            if (item.id === MERCHANT_ITEMS.LOLLIPOP.id) {
-              return (
-                <div key={item.id} className="merchant-lollipop-slot">
-                  <MerchantDialog />
-                  <MerchantItem item={item} />
-                </div>
-              )
-            }
-
-            return <MerchantItem key={item.id} item={item} />
-          })}
+          <MerchantDialog />
+          {canShowWhereAmITalk(state) ? <MerchantTalk /> : null}
+          {getVisibleMerchantCatalog(state).map((item) => (
+            <MerchantItem key={item.id} item={item} />
+          ))}
+          {shouldShowMerchantMap(state) ? <MerchantMapItem /> : null}
         </div>
       </div>
     )

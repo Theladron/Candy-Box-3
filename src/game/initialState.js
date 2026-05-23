@@ -10,6 +10,8 @@ export const initialState = {
   merchantHatClickCount: 0,
   merchantHatMessageIndex: null,
   merchantLollipopPrice: 100,
+  merchantStickOfferVisible: false,
+  merchantWalkingStickOwned: false,
   equipment: {
     weapon: null,
     chest: null,

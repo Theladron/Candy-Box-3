@@ -1,8 +1,14 @@
 export const MERCHANT_STEPS_THRESHOLD = 20
 export const MERCHANT_APPEAR_THRESHOLD = 30
 export const MERCHANT_LOLLIPOP_BASE_PRICE = 100
+export const MERCHANT_WALKING_STICK_PRICE = 100_000
 export const MERCHANT_HAT_MESSAGE_COUNT = 9
 export const MERCHANT_HAT_ANNOYED_MESSAGE_INDEX = 2
+
+export const MERCHANT_CURRENCIES = {
+  CANDIES: 'candies',
+  LOLLIPOPS: 'lollipops',
+}
 
 const LOLLIPOP_PRICE_BY_HAT_MESSAGE = {
   4: 90,
@@ -17,18 +23,28 @@ export const MERCHANT_ITEMS = {
     id: 'lollipop',
     nameKey: 'merchant.items.lollipop',
     price: MERCHANT_LOLLIPOP_BASE_PRICE,
+    currency: MERCHANT_CURRENCIES.CANDIES,
     repeatable: true,
   },
   CHARACTER_DISPLAY: {
     id: 'characterDisplay',
     nameKey: 'merchant.items.characterDisplay',
     price: 20,
+    currency: MERCHANT_CURRENCIES.CANDIES,
     repeatable: false,
   },
   MENU: {
     id: 'menu',
     nameKey: 'merchant.items.menu',
     price: 15,
+    currency: MERCHANT_CURRENCIES.CANDIES,
+    repeatable: false,
+  },
+  WALKING_STICK: {
+    id: 'walkingStick',
+    nameKey: 'merchant.items.walkingStick',
+    price: MERCHANT_WALKING_STICK_PRICE,
+    currency: MERCHANT_CURRENCIES.LOLLIPOPS,
     repeatable: false,
   },
 }
@@ -64,6 +80,8 @@ export function isMerchantItemOwned(state, itemId) {
       return state.characterDisplayUnlocked
     case MERCHANT_ITEMS.MENU.id:
       return state.menuUnlocked
+    case MERCHANT_ITEMS.WALKING_STICK.id:
+      return state.merchantWalkingStickOwned
     default:
       return false
   }
@@ -74,8 +92,21 @@ export function getMerchantItemPrice(state, itemId) {
     return state.merchantLollipopPrice
   }
 
-  const item = MERCHANT_CATALOG.find((entry) => entry.id === itemId)
+  const item = Object.values(MERCHANT_ITEMS).find((entry) => entry.id === itemId)
   return item?.price ?? 0
+}
+
+export function getMerchantItemCurrency(itemId) {
+  const item = Object.values(MERCHANT_ITEMS).find((entry) => entry.id === itemId)
+  return item?.currency ?? MERCHANT_CURRENCIES.CANDIES
+}
+
+export function canAffordMerchantItem(state, itemId, price) {
+  const currency = getMerchantItemCurrency(itemId)
+  if (currency === MERCHANT_CURRENCIES.LOLLIPOPS) {
+    return state.lollipops >= price
+  }
+  return state.candies >= price
 }
 
 export function canClickMerchantHat(state) {
@@ -85,11 +116,22 @@ export function canClickMerchantHat(state) {
   )
 }
 
+export function canClickMerchantStick(state) {
+  return shouldShowMerchant(state) && !state.merchantWalkingStickOwned
+}
+
 export function shouldShowAnnoyedMerchantArt(state) {
   return (
     state.merchantHatMessageIndex !== null &&
     state.merchantHatMessageIndex >= MERCHANT_HAT_ANNOYED_MESSAGE_INDEX
   )
+}
+
+export function formatCompactLps(amount) {
+  if (amount >= 1000 && amount % 1000 === 0) {
+    return `${amount / 1000}k`
+  }
+  return String(amount)
 }
 
 export function clickMerchantHat(state) {
@@ -105,16 +147,35 @@ export function clickMerchantHat(state) {
     ...state,
     merchantHatClickCount: messageIndex + 1,
     merchantHatMessageIndex: messageIndex,
+    merchantStickOfferVisible: false,
     merchantLollipopPrice: nextPrice,
   }
 }
 
-export function clearMerchantHatMessage(state) {
-  if (state.merchantHatMessageIndex === null) {
+export function clickMerchantStick(state) {
+  if (!canClickMerchantStick(state)) {
     return state
   }
 
-  return { ...state, merchantHatMessageIndex: null }
+  return {
+    ...state,
+    merchantStickOfferVisible: true,
+    merchantHatMessageIndex: null,
+  }
+}
+
+export function clearMerchantDialog(state) {
+  const nextState = { ...state }
+
+  if (state.merchantHatMessageIndex !== null) {
+    nextState.merchantHatMessageIndex = null
+  }
+
+  if (state.merchantStickOfferVisible) {
+    nextState.merchantStickOfferVisible = false
+  }
+
+  return nextState
 }
 
 export function getVisibleMerchantCatalog(state) {
@@ -124,13 +185,13 @@ export function getVisibleMerchantCatalog(state) {
 }
 
 export function canBuyMerchantItem(state, itemId) {
-  const item = MERCHANT_CATALOG.find((entry) => entry.id === itemId)
+  const item = Object.values(MERCHANT_ITEMS).find((entry) => entry.id === itemId)
   if (!item) {
     return false
   }
 
   const price = getMerchantItemPrice(state, itemId)
-  if (state.candies < price) {
+  if (!canAffordMerchantItem(state, itemId, price)) {
     return false
   }
   if (!item.repeatable && isMerchantItemOwned(state, itemId)) {
@@ -145,15 +206,31 @@ export function buyMerchantItem(state, itemId) {
   }
 
   const price = getMerchantItemPrice(state, itemId)
-  const nextState = { ...state, candies: state.candies - price }
+  const currency = getMerchantItemCurrency(itemId)
+  const nextState = {
+    ...state,
+    ...(currency === MERCHANT_CURRENCIES.LOLLIPOPS
+      ? { lollipops: state.lollipops - price }
+      : { candies: state.candies - price }),
+  }
 
   switch (itemId) {
     case MERCHANT_ITEMS.LOLLIPOP.id:
-      return { ...nextState, lollipops: state.lollipops + 1 }
+      return { ...nextState, lollipops: nextState.lollipops + 1 }
     case MERCHANT_ITEMS.CHARACTER_DISPLAY.id:
       return { ...nextState, characterDisplayUnlocked: true }
     case MERCHANT_ITEMS.MENU.id:
       return { ...nextState, menuUnlocked: true }
+    case MERCHANT_ITEMS.WALKING_STICK.id:
+      return {
+        ...nextState,
+        merchantWalkingStickOwned: true,
+        merchantStickOfferVisible: false,
+        equipment: {
+          ...state.equipment,
+          weapon: 'merchantWalkingStick',
+        },
+      }
     default:
       return state
   }

@@ -20,6 +20,19 @@ function HpBar({ currentHp, maxHp }) {
   )
 }
 
+function formatEquipmentValue(t, value) {
+  if (!value) {
+    return t('characterDisplay.none')
+  }
+
+  const itemKey = `equipment.items.${value}`
+  if (t(itemKey) !== itemKey) {
+    return t(itemKey)
+  }
+
+  return value
+}
+
 export function CharacterDisplay() {
   const { state } = useGame()
   const { t } = useTranslation()
@@ -38,7 +51,7 @@ export function CharacterDisplay() {
         {EQUIPMENT_SLOTS.map((slot) => (
           <Fragment key={slot}>
             <dt>{t(`equipment.${slot}`)}</dt>
-            <dd>{state.equipment[slot] ?? t('characterDisplay.none')}</dd>
+            <dd>{formatEquipmentValue(t, state.equipment[slot])}</dd>
           </Fragment>
         ))}
       </dl>

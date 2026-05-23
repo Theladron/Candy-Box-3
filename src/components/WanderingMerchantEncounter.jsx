@@ -4,9 +4,13 @@ import { ACTIONS } from '../game/actions'
 import {
   canBuyMerchantItem,
   canClickMerchantHat,
+  canClickMerchantStick,
+  formatCompactLps,
+  getMerchantItemCurrency,
   getMerchantItemPrice,
   getVisibleMerchantCatalog,
   isMerchantItemOwned,
+  MERCHANT_CURRENCIES,
   MERCHANT_ITEMS,
   shouldShowAnnoyedMerchantArt,
   shouldShowMerchant,
@@ -17,6 +21,7 @@ import { LOLLIPOP_ART } from './ascii/LollipopArt'
 import { MENU_ART } from './ascii/MenuArt'
 import { WANDERING_MERCHANT_ANNOYED_ART } from './ascii/WanderingMerchantAnnoyedArt'
 import { WANDERING_MERCHANT_ART } from './ascii/WanderingMerchantArt'
+import { MERCHANT_STICK_HITBOXES } from './merchantStickHitboxes'
 
 const MERCHANT_ITEM_ART = {
   [MERCHANT_ITEMS.LOLLIPOP.id]: LOLLIPOP_ART,
@@ -24,13 +29,51 @@ const MERCHANT_ITEM_ART = {
   [MERCHANT_ITEMS.MENU.id]: MENU_ART,
 }
 
-function MerchantHatMessage({ messageIndex }) {
+function MerchantDialog() {
+  const { state, dispatch } = useGame()
   const { t } = useTranslation()
 
+  const showStickOffer =
+    state.merchantStickOfferVisible && !state.merchantWalkingStickOwned
+  const showHatMessage =
+    !showStickOffer && state.merchantHatMessageIndex !== null
+
+  if (!showStickOffer && !showHatMessage) {
+    return null
+  }
+
+  const message = showStickOffer
+    ? t('merchant.stickOfferMessage')
+    : t(`merchant.hatMessages.${state.merchantHatMessageIndex}`)
+
+  const walkingStick = MERCHANT_ITEMS.WALKING_STICK
+  const walkingStickPrice = getMerchantItemPrice(state, walkingStick.id)
+  const canBuyStick = canBuyMerchantItem(state, walkingStick.id)
+
+  function handleBuyStick() {
+    dispatch({ type: ACTIONS.BUY_MERCHANT_ITEM, itemId: walkingStick.id })
+  }
+
   return (
-    <p className="merchant-hat-message">
-      {t(`merchant.hatMessages.${messageIndex}`)}
-    </p>
+  <>
+      <span className="merchant-dialog-spacer" aria-hidden="true" />
+      <div className="merchant-dialog">
+        <p className="merchant-dialog-message">{message}</p>
+        {showStickOffer ? (
+          <button
+            type="button"
+            className="merchant-dialog-buy"
+            disabled={!canBuyStick}
+            onClick={handleBuyStick}
+          >
+            {t('merchant.hiddenBuy', {
+              name: t(walkingStick.nameKey),
+              price: formatCompactLps(walkingStickPrice),
+            })}
+          </button>
+        ) : null}
+      </div>
+    </>
   )
 }
 
@@ -41,6 +84,11 @@ function MerchantItem({ item }) {
   const price = getMerchantItemPrice(state, item.id)
   const canBuy = canBuyMerchantItem(state, item.id)
   const art = MERCHANT_ITEM_ART[item.id]
+  const currency = getMerchantItemCurrency(item.id)
+  const priceKey =
+    currency === MERCHANT_CURRENCIES.LOLLIPOPS
+      ? 'merchant.lollipopPrice'
+      : 'merchant.price'
 
   function handleBuy() {
     dispatch({ type: ACTIONS.BUY_MERCHANT_ITEM, itemId: item.id })
@@ -55,7 +103,7 @@ function MerchantItem({ item }) {
           <p className="merchant-item-status">{t('merchant.purchased')}</p>
         ) : (
           <p className="merchant-item-price">
-            {t('merchant.price', { count: price })}
+            {t(priceKey, { count: price })}
           </p>
         )}
         {!owned || item.repeatable ? (
@@ -76,8 +124,11 @@ export function WanderingMerchantEncounter() {
     dispatch({ type: ACTIONS.CLICK_MERCHANT_HAT })
   }
 
+  function handleStickClick() {
+    dispatch({ type: ACTIONS.CLICK_MERCHANT_STICK })
+  }
+
   if (shouldShowMerchant(state)) {
-    const showHatMessage = state.merchantHatMessageIndex !== null
     const merchantArt = shouldShowAnnoyedMerchantArt(state)
       ? WANDERING_MERCHANT_ANNOYED_ART
       : WANDERING_MERCHANT_ART
@@ -96,6 +147,22 @@ export function WanderingMerchantEncounter() {
                 onClick={handleHatClick}
               />
             ) : null}
+            {canClickMerchantStick(state)
+              ? MERCHANT_STICK_HITBOXES.map((hitbox, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    className="merchant-stick-hitbox"
+                    style={hitbox}
+                    aria-label={
+                      index === 0 ? t('merchant.stickClickLabel') : undefined
+                    }
+                    aria-hidden={index === 0 ? undefined : true}
+                    tabIndex={index === 0 ? 0 : -1}
+                    onClick={handleStickClick}
+                  />
+                ))
+              : null}
           </div>
         </div>
         <div className="merchant-inventory">
@@ -103,17 +170,7 @@ export function WanderingMerchantEncounter() {
             if (item.id === MERCHANT_ITEMS.LOLLIPOP.id) {
               return (
                 <div key={item.id} className="merchant-lollipop-slot">
-                  {showHatMessage ? (
-                    <>
-                      <span
-                        className="merchant-hat-message-spacer"
-                        aria-hidden="true"
-                      />
-                      <MerchantHatMessage
-                        messageIndex={state.merchantHatMessageIndex}
-                      />
-                    </>
-                  ) : null}
+                  <MerchantDialog />
                   <MerchantItem item={item} />
                 </div>
               )

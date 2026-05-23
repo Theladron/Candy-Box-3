@@ -6,6 +6,8 @@ import { useGameTick } from '../hooks/useGameTick'
 import { CandyDisplay } from './CandyDisplay'
 import { CharacterDisplay } from './CharacterDisplay'
 import { EatCandyButton } from './EatCandyButton'
+import { EatenCandyDisplay } from './EatenCandyDisplay'
+import { LollipopDisplay } from './LollipopDisplay'
 import { Menu } from './Menu'
 import { WanderingMerchantEncounter } from './WanderingMerchantEncounter'
 
@@ -17,6 +19,8 @@ function CandyBoxPanel() {
         style={{ '--candy-display-digits': MAX_CANDY_DISPLAY_DIGITS }}
       >
         <CandyDisplay />
+        <LollipopDisplay />
+        <EatenCandyDisplay />
         <EatCandyButton />
       </div>
       <WanderingMerchantEncounter />
@@ -46,7 +50,7 @@ export function GameShell() {
 
   function handleTabChange(tab) {
     if (tab !== activeTab) {
-      dispatch({ type: ACTIONS.CLEAR_MERCHANT_HAT_MESSAGE })
+      dispatch({ type: ACTIONS.CLEAR_MERCHANT_DIALOG })
     }
     setActiveTab(tab)
   }

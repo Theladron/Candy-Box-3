@@ -1,8 +1,9 @@
 import { ACTIONS } from './actions'
 import {
   buyMerchantItem,
-  clearMerchantHatMessage,
+  clearMerchantDialog,
   clickMerchantHat,
+  clickMerchantStick,
   resolveMerchantEncounter,
 } from './merchant'
 import { applyDamage, eatAllCandies } from './player'
@@ -22,8 +23,10 @@ export function gameReducer(state, action) {
       return applyDamage(state, action.amount)
     case ACTIONS.CLICK_MERCHANT_HAT:
       return clickMerchantHat(state)
-    case ACTIONS.CLEAR_MERCHANT_HAT_MESSAGE:
-      return clearMerchantHatMessage(state)
+    case ACTIONS.CLICK_MERCHANT_STICK:
+      return clickMerchantStick(state)
+    case ACTIONS.CLEAR_MERCHANT_DIALOG:
+      return clearMerchantDialog(state)
     default:
       return state
   }

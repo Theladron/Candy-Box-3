@@ -1,7 +1,13 @@
 {
   "candy": {
     "youHave_one": "You have <strong>{{count}}</strong> candy.",
-    "youHave_other": "You have <strong>{{count}}</strong> candies."
+    "youHave_other": "You have <strong>{{count}}</strong> candies.",
+    "eaten_one": "You have eaten <strong>{{count}}</strong> candy.",
+    "eaten_other": "You have eaten <strong>{{count}}</strong> candies."
+  },
+  "lollipop": {
+    "youHave_one": "You have <strong>{{count}}</strong> lollipop.",
+    "youHave_other": "You have <strong>{{count}}</strong> lollipops."
   },
   "eatCandy": {
     "button": "Eat all candies",
@@ -18,7 +24,10 @@
     "chest": "Chest",
     "feet": "Feet",
     "hands": "Hands",
-    "head": "Head"
+    "head": "Head",
+    "items": {
+      "merchantWalkingStick": "Merchant's Walking Stick"
+    }
   },
   "menu": {
     "label": "Game menu",
@@ -35,12 +44,18 @@
     "buy": "Buy",
     "price_one": "{{count}} candy",
     "price_other": "{{count}} candies",
+    "lollipopPrice_one": "{{count}} lollipop",
+    "lollipopPrice_other": "{{count}} lollipops",
     "items": {
       "lollipop": "Lollipop",
       "characterDisplay": "Character Display",
-      "menu": "Menu"
+      "menu": "Menu",
+      "walkingStick": "Merchant's Walking Stick"
     },
     "hatClickLabel": "Touch the merchant's hat",
+    "stickClickLabel": "Touch the merchant's walking stick",
+    "stickOfferMessage": "Oh, you are interested in my stick? I suppose I could sell it...",
+    "hiddenBuy": "{{name}}: {{price}} lps",
     "hatMessages": {
       "0": "Hey, that's my hat!",
       "1": "Please don't touch it.",

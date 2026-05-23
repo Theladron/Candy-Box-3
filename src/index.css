@@ -256,6 +256,14 @@ body {
   cursor: default;
 }
 
+.merchant-stick-hitbox {
+  position: absolute;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
 .merchant-encounter {
   display: flex;
   flex-wrap: wrap;
@@ -280,20 +288,43 @@ body {
   margin: 0 0 1.25rem;
 }
 
-.merchant-hat-message-spacer {
+.merchant-dialog-spacer {
   width: 4ch;
   grid-column: 1;
+}
+
+.merchant-dialog {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 0.5rem;
+  white-space: nowrap;
+}
+
+.merchant-dialog-message {
+  margin: 0;
+}
+
+.merchant-dialog-buy {
+  flex-shrink: 0;
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 0.15rem 0.45rem;
+  cursor: pointer;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px dashed var(--color-text);
+}
+
+.merchant-dialog-buy:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .merchant-lollipop-slot .merchant-item {
   grid-column: 1 / -1;
   margin-bottom: 0;
-}
-
-.merchant-hat-message {
-  grid-column: 2;
-  margin: 0 0 0.5rem;
-  white-space: nowrap;
 }
 
 .merchant-item {

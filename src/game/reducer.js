@@ -1,4 +1,5 @@
 import { ACTIONS } from './actions'
+import { initialState } from './initialState'
 import {
   buyMerchantItem,
   clearMerchantDialog,
@@ -27,6 +28,10 @@ export function gameReducer(state, action) {
       return clickMerchantStick(state)
     case ACTIONS.CLEAR_MERCHANT_DIALOG:
       return clearMerchantDialog(state)
+    case ACTIONS.LOAD_GAME_STATE:
+      return action.state
+    case ACTIONS.RESET_GAME:
+      return { ...initialState }
     default:
       return state
   }

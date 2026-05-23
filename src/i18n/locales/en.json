@@ -67,5 +67,63 @@
       "7": "Ok, 60! 60 is all I can do!",
       "8": "That's it. For you, I make it 70 again. And now keep your hands to yourself!"
     }
+  },
+  "save": {
+    "local": {
+      "title": "Local save",
+      "warning": "Saves stay on this browser and device. Do not clear site data or you may lose them. Copy a text save below to move your game elsewhere.",
+      "slotLabel": "Save slot",
+      "slotEmpty": "empty",
+      "slotUnknownDate": "unknown date",
+      "slotUnknownCandies": "unknown candies",
+      "slotCandies": "{{count}} candies",
+      "slotOption": "Slot {{slot}} — {{date}} — {{candies}}",
+      "saveButton": "Save on slot {{slot}}",
+      "autosaveEnableButton": "Enable autosave on slot {{slot}}",
+      "autosaveDisableButton": "Disable autosave",
+      "autosaveOn": "Autosave is on for slot {{slot}}.",
+      "autosaveCountdown": "Next autosave in about {{minutes}} minutes."
+    },
+    "load": {
+      "title": "Load",
+      "slotLabel": "Load slot",
+      "loadButton": "Load slot {{slot}}"
+    },
+    "restart": {
+      "button": "Restart game",
+      "confirm": "Restart the game? Unsaved progress since your last save will be lost."
+    },
+    "text": {
+      "title": "Text save / load",
+      "help": "Export copies your game as JSON. Paste that text on another browser or device and load it here.",
+      "exportLabel": "Exported save",
+      "exportPlaceholder": "Click export to fill this area…",
+      "exportButton": "Export current game",
+      "copyButton": "Copy to clipboard",
+      "importLabel": "Paste a save to load",
+      "importPlaceholder": "Paste JSON here…",
+      "importButton": "Load from text"
+    },
+    "messages": {
+      "saved": "Game saved on slot {{slot}}.",
+      "autosaveEnabled": "Autosave enabled on slot {{slot}}.",
+      "autosaveDisabled": "Autosave disabled.",
+      "restarted": "Game restarted.",
+      "imported": "Game loaded from text.",
+      "loaded": "Game loaded from slot {{slot}}.",
+      "copied": "Save copied to clipboard."
+    },
+    "errors": {
+      "invalid_slot": "That save slot is not valid.",
+      "empty_slot": "That slot is empty.",
+      "invalid_payload": "That save file is not valid.",
+      "invalid_state": "That save file is missing game data.",
+      "corrupt_save": "That save could not be read. It may be corrupt.",
+      "quota_exceeded": "Could not save: browser storage is full.",
+      "save_failed": "Could not save the game.",
+      "empty_text": "Paste a save before loading.",
+      "copy_failed": "Could not copy to clipboard.",
+      "delete_failed": "Could not clear that slot."
+    }
   }
 }

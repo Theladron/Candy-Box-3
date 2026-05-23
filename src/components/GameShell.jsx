@@ -9,6 +9,7 @@ import { EatCandyButton } from './EatCandyButton'
 import { EatenCandyDisplay } from './EatenCandyDisplay'
 import { LollipopDisplay } from './LollipopDisplay'
 import { Menu } from './Menu'
+import { SavePanel } from './panels/SavePanel'
 import { WanderingMerchantEncounter } from './WanderingMerchantEncounter'
 
 function CandyBoxPanel() {
@@ -26,10 +27,6 @@ function CandyBoxPanel() {
       <WanderingMerchantEncounter />
     </div>
   )
-}
-
-function SavePanel() {
-  return null
 }
 
 function SettingsPanel() {

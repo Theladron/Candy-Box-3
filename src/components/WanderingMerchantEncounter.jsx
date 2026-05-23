@@ -21,7 +21,7 @@ import { LOLLIPOP_ART } from './ascii/LollipopArt'
 import { MENU_ART } from './ascii/MenuArt'
 import { WANDERING_MERCHANT_ANNOYED_ART } from './ascii/WanderingMerchantAnnoyedArt'
 import { WANDERING_MERCHANT_ART } from './ascii/WanderingMerchantArt'
-import { MERCHANT_STICK_HITBOXES } from './merchantStickHitboxes'
+import { MERCHANT_HAT_HITBOX, MERCHANT_STICK_HITBOXES } from './merchantStickHitboxes'
 
 const MERCHANT_ITEM_ART = {
   [MERCHANT_ITEMS.LOLLIPOP.id]: LOLLIPOP_ART,
@@ -143,6 +143,7 @@ export function WanderingMerchantEncounter() {
               <button
                 type="button"
                 className="merchant-hat-hitbox"
+                style={MERCHANT_HAT_HITBOX}
                 aria-label={t('merchant.hatClickLabel')}
                 onClick={handleHatClick}
               />

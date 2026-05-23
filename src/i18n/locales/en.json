@@ -39,6 +39,18 @@
       "lollipop": "Lollipop",
       "characterDisplay": "Character Display",
       "menu": "Menu"
+    },
+    "hatClickLabel": "Touch the merchant's hat",
+    "hatMessages": {
+      "0": "Hey, that's my hat!",
+      "1": "Please don't touch it.",
+      "2": "…",
+      "3": "Come on, please leave me alone.",
+      "4": "Ok, ok. I give you a Discount, how about that?",
+      "5": "Please, I don't know what else to do. Another Discount maybe?",
+      "6": "I can't take it anymore!",
+      "7": "Ok, 60! 60 is all I can do!",
+      "8": "That's it. For you, I make it 70 again. And now keep your hands to yourself!"
     }
   }
 }

@@ -1,5 +1,10 @@
 import { ACTIONS } from './actions'
-import { buyMerchantItem, resolveMerchantEncounter } from './merchant'
+import {
+  buyMerchantItem,
+  clearMerchantHatMessage,
+  clickMerchantHat,
+  resolveMerchantEncounter,
+} from './merchant'
 import { applyDamage, eatAllCandies } from './player'
 
 export function gameReducer(state, action) {
@@ -15,6 +20,10 @@ export function gameReducer(state, action) {
       return buyMerchantItem(state, action.itemId)
     case ACTIONS.TAKE_DAMAGE:
       return applyDamage(state, action.amount)
+    case ACTIONS.CLICK_MERCHANT_HAT:
+      return clickMerchantHat(state)
+    case ACTIONS.CLEAR_MERCHANT_HAT_MESSAGE:
+      return clearMerchantHatMessage(state)
     default:
       return state
   }

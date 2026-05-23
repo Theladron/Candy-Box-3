@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { useGame } from '../context/GameContext'
+import { ACTIONS } from '../game/actions'
+import { MAX_CANDY_DISPLAY_DIGITS } from '../game/formulas'
 import { useGameTick } from '../hooks/useGameTick'
 import { CandyDisplay } from './CandyDisplay'
 import { CharacterDisplay } from './CharacterDisplay'
@@ -8,11 +11,16 @@ import { WanderingMerchantEncounter } from './WanderingMerchantEncounter'
 
 function CandyBoxPanel() {
   return (
-    <>
-      <CandyDisplay />
-      <EatCandyButton />
+    <div className="candy-box-panel">
+      <div
+        className="candy-box-actions"
+        style={{ '--candy-display-digits': MAX_CANDY_DISPLAY_DIGITS }}
+      >
+        <CandyDisplay />
+        <EatCandyButton />
+      </div>
       <WanderingMerchantEncounter />
-    </>
+    </div>
   )
 }
 
@@ -32,8 +40,16 @@ const PANELS = {
 
 export function GameShell() {
   useGameTick()
+  const { dispatch } = useGame()
   const [activeTab, setActiveTab] = useState('candyBox')
   const ActivePanel = PANELS[activeTab] ?? CandyBoxPanel
+
+  function handleTabChange(tab) {
+    if (tab !== activeTab) {
+      dispatch({ type: ACTIONS.CLEAR_MERCHANT_HAT_MESSAGE })
+    }
+    setActiveTab(tab)
+  }
 
   return (
     <main className="game-shell">
@@ -42,7 +58,7 @@ export function GameShell() {
           <CharacterDisplay />
         </div>
         <div className="game-shell-top-menu">
-          <Menu activeTab={activeTab} onTabChange={setActiveTab} />
+          <Menu activeTab={activeTab} onTabChange={handleTabChange} />
         </div>
       </header>
       <div className="game-shell-main">
